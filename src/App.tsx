@@ -90,6 +90,9 @@ function Room(props: { roomId: string }) {
     const raw = await scanQrCode()
     updateState(raw)
   }
+  useEffect(() => {
+    Object.assign(window, { updateState })
+  }, [])
   return (
     <>
       <div className="card">
@@ -110,7 +113,7 @@ function Room(props: { roomId: string }) {
             )}
           >
             <Icon icon={Person} />
-            <span>{onlineCount}</span>
+            <span data-testid="Online user count">{onlineCount}</span>
           </div>
         </button>
         <div className="card-body">
@@ -266,8 +269,10 @@ function RoomOptions(props: {
             </p>
             <p>
               Your current room is{' '}
-              <strong>{roomNickname(props.roomId, true)}</strong>. Other peers
-              can join your room by scanning this QR code.
+              <strong data-testid="Room name">
+                {roomNickname(props.roomId, true)}
+              </strong>
+              . Other peers can join your room by scanning this QR code.
             </p>
             <RoomQRCode roomId={props.roomId} />
           </div>
