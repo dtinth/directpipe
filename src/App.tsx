@@ -19,6 +19,7 @@ import Exit from '@iconify/icons-material-symbols/exit-to-app-sharp'
 import Hidden from '@iconify/icons-mdi/eye-off'
 import Visible from '@iconify/icons-mdi/eye'
 import Checkmark from '@iconify/icons-mdi/check'
+import Share from '@iconify/icons-mdi/share'
 import clsx from 'clsx'
 import { myId } from './self'
 
@@ -122,7 +123,7 @@ function Room(props: { roomId: string }) {
         <div className="card-footer d-flex gap-2">
           <button
             type="button"
-            className="btn btn-outline-primary d-inline-flex gap-1 align-items-center"
+            className="btn btn-outline-secondary d-inline-flex gap-1 align-items-center"
             onClick={paste}
           >
             <Icon icon={Paste} />
@@ -135,6 +136,16 @@ function Room(props: { roomId: string }) {
           >
             <Icon icon={QR} />
             Scan
+          </button>
+          <div className="flex-grow-1"></div>
+          <button
+            type="button"
+            className="btn btn-outline-secondary d-inline-flex gap-1 align-items-center"
+            data-bs-toggle="modal"
+            data-bs-target="#roomModal"
+          >
+            <Icon icon={Share} />
+            Share
           </button>
         </div>
       </div>
@@ -268,7 +279,7 @@ function RoomOptions(props: {
                 onClick={scan}
               >
                 <Icon icon={QR} />
-                Scan
+                Scan to join
               </button>
               <button
                 type="button"
