@@ -10,6 +10,12 @@ import * as sha256 from '@stablelib/sha256'
 import { useEffect, useMemo, useState } from 'react'
 import QRCode from 'react-qr-code'
 import { getRoom } from './sync'
+import { Icon } from '@iconify-icon/react'
+import Door from '@iconify/icons-material-symbols/door-open-outline-sharp'
+import Person from '@iconify/icons-material-symbols/person-outline'
+import QR from '@iconify/icons-material-symbols/qr-code-2-rounded'
+import Clipboard from '@iconify/icons-material-symbols/content-copy-outline-rounded'
+import clsx from 'clsx'
 
 function App() {
   const roomId = useStore(roomStore)
@@ -54,22 +60,32 @@ function Room(props: { roomId: string }) {
     room.doc.on('update', onChange)
     return () => room.doc.off('update', onChange)
   }, [room.doc])
+  const updateText = (text: string) => {
+    room.doc.getMap<string>('state').set('text', text)
+  }
   return (
     <>
       <div className="card">
         <button
           type="button"
-          className="border-top-0 border-start-0 border-end-0 card-header"
+          className="border-top-0 border-start-0 border-end-0 card-header d-flex gap-2 align-items-center justify-content-center"
           data-bs-toggle="modal"
           data-bs-target="#roomModal"
         >
-          <strong>{roomNickname(props.roomId)}</strong>
+          <div className="d-flex gap-1 align-items-center">
+            <Icon icon={Door} />
+            <strong>{roomNickname(props.roomId)}</strong>
+          </div>
+          <div className={clsx(
+            "d-flex gap-1 align-items-center",
+            onlineCount < 2 ? "text-muted" : "text-success"
+          )}>
+            <Icon icon={Person} />
+            <span>{onlineCount}</span>
+          </div>
         </button>
         <div className="card-body">
           {text || <em className="text-muted">(no text)</em>}
-        </div>
-        <div className="card-footer text-muted">
-          connected users: {onlineCount}
         </div>
       </div>
     </>
@@ -137,10 +153,11 @@ function RoomOptions(props: {
             <div className="d-flex flex-fill">
               <button
                 type="button"
-                className="btn btn-secondary"
+                className="btn btn-secondary d-inline-flex align-items-center gap-1"
                 onClick={scan}
               >
-                Scan QR code
+                <Icon icon={QR} />
+                Scan
               </button>
             </div>
             <div className="d-flex flex-fill justify-content-end">
@@ -180,7 +197,8 @@ function RoomQRCode(props: { roomId: string }) {
           <QRCode value={connectUrl} />
         </div>
         <div className="d-flex gap-2 align-items-center">
-          <button onClick={copy} className="btn btn-sm btn-outline-secondary">
+          <button onClick={copy} className="btn btn-sm btn-outline-secondary d-inline-flex gap-1 align-items-center">
+            <Icon icon={Clipboard} />
             Copy URL
           </button>
           <button
