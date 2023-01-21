@@ -1,7 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import './App.css'
-import { useLog } from './log'
 import { randomRoom, roomStore } from './store'
 import { useStore } from './useStore'
 import dockerNames from 'docker-names'
