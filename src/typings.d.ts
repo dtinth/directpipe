@@ -7,6 +7,8 @@ declare module 'simple-peer/simplepeer.min.js' {
 declare module 'docker-names' {
   class DockerNames {
     getRandomName(): string
+    left: string[]
+    right: string[]
   }
   var dockerNames: DockerNames
   export default dockerNames

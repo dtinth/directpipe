@@ -25,7 +25,9 @@
     "react-qr-code": "^2.0.11",
     "simple-peer": "^9.11.1",
     "sync-external-store": "^1.0.0",
-    "tweetnacl": "^1.0.3"
+    "tweetnacl": "^1.0.3",
+    "y-webrtc": "^10.2.4",
+    "yjs": "^13.5.44"
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.0",
