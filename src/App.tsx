@@ -335,9 +335,6 @@ function RoomQRCode(props: { roomId: string }) {
   const copy = async () => {
     navigator.clipboard.writeText(connectUrl!)
   }
-  const connectInNewWindow = () => {
-    window.open(connectUrl!, '_blank')
-  }
   return (
     <div className="text-center">
       <div className="d-flex flex-column gap-2 align-items-center">
@@ -356,12 +353,14 @@ function RoomQRCode(props: { roomId: string }) {
               </button>
             )}
           </Acknowledger>
-          <button
-            onClick={connectInNewWindow}
+          <a
+            href={connectUrl}
             className="btn btn-sm btn-outline-secondary"
+            target="_blank"
+            rel="noreferrer"
           >
             Open in new window
-          </button>
+          </a>
         </div>
       </div>
     </div>
