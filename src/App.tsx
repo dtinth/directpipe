@@ -186,7 +186,7 @@ function StateViewer(props: { state: State }) {
         {multiline ? null : (
           <input
             type={hidden ? 'password' : 'text'}
-            className="form-control"
+            className="form-control font-monospace"
             readOnly
             value={hidden ? mask(state.text) : state.text}
             style={{ color, borderColor: color }}
