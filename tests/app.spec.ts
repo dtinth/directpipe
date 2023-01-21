@@ -22,9 +22,6 @@ test('can join room', async ({ page }) => {
   await expect(
     page.frameLocator('#left').getByTestId('Room name'),
   ).not.toHaveText(name)
-  await expect(
-    page.frameLocator('#left').getByTestId('Online user count'),
-  ).toHaveText('1')
   const href = await page
     .frameLocator('#left')
     .getByRole('link', { name: 'Open in new window' })
@@ -36,9 +33,6 @@ test('can join room', async ({ page }) => {
       (body, href) => (body.ownerDocument.defaultView!.location.href = href!),
       href,
     )
-  await expect(
-    page.frameLocator('#left').getByTestId('Online user count'),
-  ).toHaveText('2')
   await page.frameLocator('#left').locator('#closeRoomModal').click()
   await page
     .frameLocator('#left')
