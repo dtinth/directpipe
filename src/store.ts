@@ -9,6 +9,10 @@ function getInitialRoom() {
   if (sessionStorage['room']) {
     return sessionStorage['room']
   }
+  return randomRoom()
+}
+
+export function randomRoom() {
   return (crypto.randomUUID() + crypto.randomUUID()).split('-').join('')
 }
 
