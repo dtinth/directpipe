@@ -1,5 +1,12 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import './App.css'
 import SimplePeer from 'simple-peer/simplepeer.min.js'
 import QRCode from 'react-qr-code'
@@ -11,8 +18,9 @@ import { useLog, writeLog } from './log'
 function App() {
   const peer = useStore(peerStore)
   let contents: ReactNode
-  if (!peer) {
-    // contents = offer && <QRCode value={offer} />
+  if (peer) {
+    contents = <div>Connected</div>
+  } else {
     contents = <Connect />
   }
   return (
@@ -25,9 +33,22 @@ function App() {
   )
 }
 
+let consumedConnectKey: string | null = null
+function consumeConnectKey() {
+  if (consumedConnectKey) {
+    return consumedConnectKey
+  }
+  const m = location.hash.match(/^#connect=([^&]+)/)
+  if (m) {
+    consumedConnectKey = m[1]
+    history.replaceState(null, '', '#')
+  }
+  return consumedConnectKey
+}
+
 function Connect() {
   const [connectKey, setConnectKey] = useState<string | null>(
-    new URLSearchParams(location.search).get('connectKey') || null,
+    consumeConnectKey(),
   )
   const navItem = (
     contents: ReactNode,
@@ -43,6 +64,14 @@ function Connect() {
       </button>
     </li>
   )
+  const handleConnectKey = (text: string) => {
+    const m = text.match(/#connect=([^&]+)/)
+    if (m) {
+      setConnectKey(m[1])
+    } else {
+      writeLog('Invalid connect key received')
+    }
+  }
   const scan = async () => {
     const raw = await new Promise<string>((resolve) => {
       const w = window.open(
@@ -59,16 +88,16 @@ function Connect() {
       }
       addEventListener('message', onMessage)
     })
-    setConnectKey(raw)
+    handleConnectKey(raw)
   }
   document.addEventListener('paste', (e) => {
     const text = e.clipboardData?.getData('text')
     if (text) {
-      setConnectKey(text)
+      handleConnectKey(text)
     }
   })
   const onConnect = (peer: SimplePeer.Instance) => {
-    console.log('onConnect', peer)
+    peerStore.state = peer
   }
   return (
     <div className="card">
@@ -103,31 +132,53 @@ function useLatest<T>(value: T): () => T {
 }
 
 function ListenMode(props: { onConnect: (peer: SimplePeer.Instance) => void }) {
-  const [offer, setOffer] = useState<string | null>(null)
+  const [connectKey, setConnectKey] = useState<string | null>(null)
   const getOnConnect = useLatest(props.onConnect)
+  const connectUrl = useMemo(() => {
+    if (!connectKey) {
+      return null
+    }
+    const url = new URL(location.href)
+    url.hash = `#connect=${connectKey}`
+    return url.toString()
+  }, [connectKey])
   useEffect(() => {
     const exchange = new PeerExchange({
       log: writeLog.child('PeerExchange'),
     })
-    setOffer(exchange.connectKey)
+    setConnectKey(exchange.connectKey)
     exchange.peerPromise.then((peer) => getOnConnect()(peer))
     return () => {
       exchange.dispose()
     }
   }, [getOnConnect])
-  const copyOffer = () => {
-    navigator.clipboard.writeText(offer!)
+  const copyConnectKey = () => {
+    navigator.clipboard.writeText(connectUrl!)
+  }
+  const connectInNewWindow = () => {
+    window.open(connectUrl!, '_blank')
   }
   return (
     <div className="text-center">
-      {offer ? (
+      {connectUrl ? (
         <div className="d-flex flex-column gap-2 align-items-center">
           <div className="bg-white p-2 rounded">
-            <QRCode value={offer} />
+            <QRCode value={connectUrl} />
           </div>
-          <button onClick={copyOffer} className="btn btn-outline-secondary">
-            Copy connection key
-          </button>
+          <div className="d-flex gap-2 align-items-center">
+            <button
+              onClick={copyConnectKey}
+              className="btn btn-outline-secondary"
+            >
+              Copy connection key
+            </button>
+            <button
+              onClick={connectInNewWindow}
+              className="btn btn-outline-secondary"
+            >
+              Test connection
+            </button>
+          </div>
         </div>
       ) : (
         <div className="spinner-border" role="status">

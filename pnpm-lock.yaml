@@ -16,6 +16,7 @@ specifiers:
   clsx: ^1.2.1
   docker-names: ^1.2.1
   jotai: ^1.13.1
+  p-defer: ^4.0.0
   prettier: ^2.8.3
   qrcode: ^1.5.1
   react: ^18.2.0
@@ -37,6 +38,7 @@ dependencies:
   clsx: 1.2.1
   docker-names: 1.2.1
   jotai: 1.13.1_react@18.2.0
+  p-defer: 4.0.0
   qrcode: 1.5.1
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -1125,6 +1127,11 @@ packages:
   /object-assign/4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /p-defer/4.0.0:
+    resolution: {integrity: sha512-Vb3QRvQ0Y5XnF40ZUWW7JfLogicVh/EnA5gBIvKDJoYpeI82+1E3AlB9yOcKFS0AhHrWVnAQO39fbR0G99IVEQ==}
+    engines: {node: '>=12'}
     dev: false
 
   /p-limit/2.3.0:
