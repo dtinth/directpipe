@@ -7,8 +7,9 @@ import { useStore } from './useStore'
 import dockerNames from 'docker-names'
 import * as hex from '@stablelib/hex'
 import * as sha256 from '@stablelib/sha256'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import QRCode from 'react-qr-code'
+import { getRoom } from './sync'
 
 function App() {
   const roomId = useStore(roomStore)
@@ -38,6 +39,21 @@ function roomNickname(id: string, withHash = false) {
 }
 
 function Room(props: { roomId: string }) {
+  const room = getRoom(props.roomId)
+  const onlineCount = useStore(room.onlineCount)
+  const [text, setText] = useState(
+    room.doc.getMap<string>('state').get('text') || '',
+  )
+  useEffect(() => {
+    Object.assign(window, { room })
+    return room.sync()
+  }, [room])
+  useEffect(() => {
+    const onChange = () =>
+      setText(room.doc.getMap<string>('state').get('text') || '')
+    room.doc.on('update', onChange)
+    return () => room.doc.off('update', onChange)
+  }, [room.doc])
   return (
     <>
       <div className="card">
@@ -49,7 +65,12 @@ function Room(props: { roomId: string }) {
         >
           <strong>{roomNickname(props.roomId)}</strong>
         </button>
-        <div className="card-body">whee</div>
+        <div className="card-body">
+          {text || <em className="text-muted">(no text)</em>}
+        </div>
+        <div className="card-footer text-muted">
+          connected users: {onlineCount}
+        </div>
       </div>
     </>
   )

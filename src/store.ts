@@ -14,3 +14,15 @@ function getInitialRoom() {
 
 export const roomStore = new SyncExternalStore<string>(getInitialRoom())
 sessionStorage['room'] = roomStore.state
+
+roomStore.subscribe(() => {
+  sessionStorage['room'] = roomStore.state
+})
+
+addEventListener('hashchange', () => {
+  const m = location.hash.match(/^#room=([^&]+)/)
+  if (m) {
+    history.replaceState(null, '', '#')
+    roomStore.state = m[1]
+  }
+})
